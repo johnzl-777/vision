@@ -1,3 +1,5 @@
+# Implement fixes from https://github.com/shikhar-srivastava/share/blob/master/no_reuse.py
+# resnet18 doesn't seem to use Bottleneck, just edit BasicBlock
 from functools import partial
 from typing import Type, Any, Callable, Union, List, Optional
 
@@ -134,7 +136,8 @@ class Bottleneck(nn.Module):
         self.bn2 = norm_layer(width)
         self.conv3 = conv1x1(width, planes * self.expansion)
         self.bn3 = norm_layer(planes * self.expansion)
-        self.relu = nn.ReLU(inplace=True)
+        self.relu1 = nn.ReLU(inplace=True)
+        self.relu2 = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
 
@@ -143,7 +146,7 @@ class Bottleneck(nn.Module):
 
         out = self.conv1(x)
         out = self.bn1(out)
-        out = self.relu(out)
+        out = self.relu1(out)
 
         out = self.conv2(out)
         out = self.bn2(out)
@@ -156,7 +159,7 @@ class Bottleneck(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        out = self.relu(out)
+        out = self.relu2(out)
 
         return out
 
